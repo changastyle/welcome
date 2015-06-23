@@ -81,7 +81,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f5f6', end
 .panelesLaterales
 {
           height: 100%;
-          height: calc(100% - 80px);
+          height: 1000px;
+          //height: calc(100% - 80px);
           top:100px;
 }
 #panelIZQ

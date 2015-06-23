@@ -13,13 +13,29 @@ and open the template in the editor.
         <!--<link rel="stylesheet" href="frontend/css/general.css">-->
         <?php
          echo $GLOBALS;
+         
         ?>
     </head>
     <body>
         <div class="paneles" id="banner"></div>
         <div class="paneles" id="body">
                <div class="paneles" id="panelPrincipal">
-                         asdfasdfasf
+                         <?PHP 
+                         
+                         require './backend/conexionDB.php';
+                         
+                         $arr = query("SELECT * FROM usuarios");
+                         
+                        /* foreach ($arr as $a)
+                         {
+                              for ($i = 0 ; $i < sizeof($a); $i ++)
+                              {
+                                   echo $a[$i];
+                              }
+                         } */
+                         
+                         ?>
+
                          <footer class="paneles" id="footer">FOOTERRRR</div>
                </div>
             <div class="paneles panelesLaterales" id="panelIZQ"></div>
