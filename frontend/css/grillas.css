@@ -1,0 +1,15 @@
+.tablas
+{
+        width: 100%;
+        background-color: black;
+}
+.rows
+{
+        width: 100%;
+        background-color:yellow;
+}
+.tablesdatas
+{
+        border:solid 2px black;
+        border-radius: 5px ;
+}

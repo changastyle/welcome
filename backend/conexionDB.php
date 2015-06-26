@@ -4,102 +4,92 @@ $user = 'root';
 $passwd = 'descargar';
 $schema = 'pruebas';
 $port = 3306;
-$credenciales = "user=postgres password=";
 $host = 'localhost';
 $motor = 'mysql';
-
-//ESTABLESCO 1 CONEXION:
+$conexion = null;
+     
 function conectar()
 {
-     global $user, $passwd, $db, $port, $credenciales, $host, $motor;
-     
-     $conexion = null;
+     global $user, $passwd, $schema, $port, $host, $motor, $conexion;
      
      if($motor == 'mysql')
-     {
-          /*$conexion = mysql_connect($host, $user, $passwd) or die(mysql_error());*/          //CONEXION VIEJA P.ESTRUCTURADO.
-          $conexion = mysqli_connect($host, $user, $passwd, $schema);
-          if (mysqli_connect_errno($mysqli)) 
-          {
-              echo "Fallo al conectar a MySQL: " . mysqli_connect_error();
-          }
-          else
-          {
-             echo "C" .$conexion;
-          }
-     }
+     {       
+        $conexion=new mysqli($host,$user,$passwd,$schema); 
+
+         if ($conexion->connect_error) 
+           {  
+                echo "USUARIO = ". $user ."<br>";
+                echo "PASSWORD = ". $passwd ."<br>";
+                echo "SCHEMA = ".$schema. "<br>";
+                echo "PORT = " . $port ."<br>";
+                echo "HOST= " . $host . "<br>";
+                echo "MOTOR = " . $motor . "<br>";
+                
+                echo 'Error de Conexión (' . $conexion->connect_errno . ') '. $conexion->connect_error;
+                echo $conexion->error;
+
+           }
+           else
+           {
+                   //echo "SE conecto la bosta esta";
+           }     
+       }
      else if($motor == 'postgres')
      {
           $conexion = pg_connect(" host=" . $host ." port=" . $port ." dbname=" . $schema ." ".$credenciales)or die("Error: De Conexion con PostgresSQL ");
      }
-
-     if(!$conexion)
-     {
-              echo "conexion fallida";
-     }
-     else
-     {
-              echo "success connection to ".$motor. ' @ ' .$host .":".$port.".";
-     }
-     return conexion;
 }
 function desconectar($conexion)
 {
-     if($motor == 'mysql')
-     {
-          mysql_close($conexion);
-     }
-     else if($motor == 'postgres')
-     {
-          pg_close($conexion);
-     }
-     
-     if($conexion == null)
-     {
-          echo "Cerre la conexion.";
-     }
+        global $conexion, $motor;
+        
+        if($motor == 'mysql')
+        {
+             $conexion->close();
+        }
+        else if($motor == 'postgres')
+        {
+             pg_close($conexion);
+        }
+
+        if($conexion == null)
+        {
+             echo "Cerre la conexion.";
+        }
 }
 
 function query($sql)
 {
      global $conexion, $motor;
+                
+     $result = array();
      
-     $respuestas = array();
-     
-     if($conexion == null)
-     {
-          $conexion = conectar();
-     }
-     else
-     {
-          echo "Habia conexion";
-     }
-             
      if($motor == 'mysql')
      {
-          echo "<br>MYSQL" .  $sql .  $conexion->query($sql);
+        $result = $conexion->query($sql);
      }
      else if($motor == 'postgres')
      {
-          $statement = pg_query($conexion,$sql)or die("ERROR al realizar SQL " .  $sql );
+             $statement = pg_query($conexion,$sql)or die("ERROR al realizar SQL " .  $sql );
 
-          //DEVUELVE CANTIDAD DE FILAS DE LA CONSULTA:
+                //DEVUELVE CANTIDAD DE FILAS DE LA CONSULTA:
 
-          while($fila = pg_fetch_row($statement))
-          {
-               $arrayFila = array();
-               for($i = 0 ; $i < sizeof($fila); $i++ )
-               {
-                      array_push($arrayFila, $fila[$i]);
-               }
-               array_push($respuestas,$arrayFila);
-          }
-     }     
+                while($fila = pg_fetch_row($statement))
+                {
+                        $arrayFila = array();
+                        for($i = 0 ; $i < sizeof($fila); $i++ )
+                        {
+                                array_push($arrayFila, $fila[$i]);
+                        }
+                        array_push($result,$arrayFila);
+                }
+     }
      else
      {
-          echo "MOTOR = " . $motor;
+             echo "FALLO MOTOR : " . $motor;
      }
-     return $respuestas;
+     
+     return $result;
 }
 function insert($sql)
 {
